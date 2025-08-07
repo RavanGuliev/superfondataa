@@ -7,21 +7,26 @@ const middlewares = jsonServer.defaults();
 
 server.use(middlewares);
 
-// Faylları oxuyub birləşdir:
-const path = require('path');
-const base = JSON.parse(fs.readFileSync(path.join(__dirname, 'db', 'db.json')));
-const bestsellers = JSON.parse(fs.readFileSync(path.join(__dirname, 'db', 'bestsellers.json'))).bestsellers.data.items;
-const newData = JSON.parse(fs.readFileSync(path.join(__dirname, 'db', 'new.json'))).new.data.items;
+// Faylları oxuyuruq
+const basePath = path.join(__dirname, 'db');
 
-// Runtime-da birləşdir:
+const base = JSON.parse(fs.readFileSync(path.join(basePath, 'db.json')));
+const bestsellers = JSON.parse(fs.readFileSync(path.join(basePath, 'bestsellers.json'))).bestsellers.data.items;
+const newData = JSON.parse(fs.readFileSync(path.join(basePath, 'new.json'))).new.data.items;
+
+// Birləşdiririk
 const combinedData = {
   ...base,
   bestsellers,
   new: newData
 };
 
-// Router-ə dinamik olaraq yüklə:
+// Router yaradırıq
 const router = jsonServer.router(combinedData);
+
 server.use(router);
 
-module.exports = server;
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`JSON Server is running on port ${PORT}`);
+});

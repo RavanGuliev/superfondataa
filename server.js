@@ -1,32 +1,21 @@
-const jsonServer = require('json-server');
-const fs = require('fs');
-const path = require('path');
-
+// JSON Server module
+const jsonServer = require("json-server");
 const server = jsonServer.create();
+const router = jsonServer.router("db/db.json");
 const middlewares = jsonServer.defaults();
 
 server.use(middlewares);
-
-// Faylları oxuyuruq
-const basePath = path.join(__dirname, 'db');
-
-const base = JSON.parse(fs.readFileSync(path.join(basePath, 'db.json')));
-const bestsellers = JSON.parse(fs.readFileSync(path.join(basePath, 'bestsellers.json'))).bestsellers.data.items;
-const newData = JSON.parse(fs.readFileSync(path.join(basePath, 'new.json'))).new.data.items;
-
-// Birləşdiririk
-const combinedData = {
-  ...base,
-  bestsellers,
-  new: newData
-};
-
-// Router yaradırıq
-const router = jsonServer.router(combinedData);
-
+// Add this before server.use(router)
+server.use(
+	// Add custom route here if needed
+	jsonServer.rewriter({
+		"./*": "/$1",
+	})
+);
 server.use(router);
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`JSON Server is running on port ${PORT}`);
+server.listen(3000, () => {
+	console.log("JSON Server is running");
 });
+
+// Export the Server API
+module.exports = server;

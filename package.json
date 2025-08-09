@@ -16,7 +16,9 @@
   ],
   "author": "Ivo Culic",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "cors": "^2.8.5"
+  },
   "devDependencies": {
     "json-server": "^0.17.1"
   }
